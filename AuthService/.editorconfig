@@ -1,0 +1,37 @@
+# top-most EditorConfig file
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Tabs with size 4
+indent_style = tab
+indent_size = 4
+tab_width = 4
+
+# C# specific rules
+[*.cs]
+# Place open braces on the same line
+csharp_new_line_before_open_brace = none
+
+# Require 'this.' for member access (optional, makes code clearer)
+dotnet_style_qualification_for_field = true:suggestion
+dotnet_style_qualification_for_property = true:suggestion
+dotnet_style_qualification_for_method = true:suggestion
+dotnet_style_qualification_for_event = true:suggestion
+
+# Prefer explicit types (e.g., int x = 0; instead of var x = 0;)
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = false:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Prefer using 'is not null' checks
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
+
+# Organize usings
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = true

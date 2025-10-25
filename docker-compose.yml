@@ -1,0 +1,160 @@
+version: '3.9'
+
+services:
+    # --- API Gateway ---
+    api-gateway:
+        container_name: api-gateway
+        build:
+            context: ./ApiGateway
+        ports:
+            - "5000:80"
+        depends_on:
+            - auth-service
+            # - theater-service
+            # - movies-service
+            # - booking-service
+            # - payment-service
+            # - notification-service
+            # - analytics-service
+
+            # --- Auth Service ---
+    auth-service:
+        container_name: auth-service
+        build:
+            context: ./AuthService
+        environment:
+            - ConnectionStrings__Default=Host=db-auth;Database=auth;Username=postgres;Password=postgres
+        depends_on:
+            - db-auth
+
+    # --- Theater Service ---
+    # theater-service:
+    #   container_name: theater-service
+    #   build:
+    #     context: ./theater-service
+    #   environment:
+    #     - ConnectionStrings__Default=Host=db-theater;Database=theater;Username=postgres;Password=postgres
+    #   depends_on:
+    #     - db-theater
+    #     - rabbitmq
+    #
+    # # --- Movies Service ---
+    # movies-service:
+    #   container_name: movies-service
+    #   build:
+    #     context: ./movies-service
+    #   environment:
+    #     - ConnectionStrings__Default=Host=db-movies;Database=movies;Username=postgres;Password=postgres
+    #   depends_on:
+    #     - db-movies
+    #     - rabbitmq
+    #
+    # # --- Booking Service ---
+    # booking-service:
+    #   container_name: booking-service
+    #   build:
+    #     context: ./booking-service
+    #   environment:
+    #     - ConnectionStrings__Default=Host=db-booking;Database=booking;Username=postgres;Password=postgres
+    #     - RABBITMQ__HOST=rabbitmq
+    #   depends_on:
+    #     - db-booking
+    #     - rabbitmq
+    #
+    # # --- Payment Service ---
+    # payment-service:
+    #   container_name: payment-service
+    #   build:
+    #     context: ./payment-service
+    #   environment:
+    #     - ConnectionStrings__Default=Host=db-payment;Database=payment;Username=postgres;Password=postgres
+    #   depends_on:
+    #     - db-payment
+    #
+    # # --- Notification Service ---
+    # notification-service:
+    #   container_name: notification-service
+    #   build:
+    #     context: ./notification-service
+    #   environment:
+    #     - RABBITMQ__HOST=rabbitmq
+    #   depends_on:
+    #     - rabbitmq
+    #
+    # # --- Analytics Service ---
+    # analytics-service:
+    #   container_name: analytics-service
+    #   build:
+    #     context: ./analytics-service
+    #   environment:
+    #     - ConnectionStrings__Default=Host=db-analytics;Database=analytics;Username=postgres;Password=postgres
+    #     - RABBITMQ__HOST=rabbitmq
+    #   depends_on:
+    #     - db-analytics
+    #     - rabbitmq
+    #
+    # # --- RabbitMQ ---
+    # rabbitmq:
+    #   image: rabbitmq:3-management
+    #   container_name: rabbitmq
+    #   ports:
+    #     - "5672:5672"
+    #     - "15672:15672"
+    #   environment:
+    #     RABBITMQ_DEFAULT_USER: guest
+    #     RABBITMQ_DEFAULT_PASS: guest
+    #
+    # --- PostgreSQL Databases ---
+    db-auth:
+        image: postgres:15
+        container_name: db-auth
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: auth
+        ports:
+            - "5432:5432"
+        volumes:
+            - auth_pgdata:/var/lib/postgresql/data
+    # db-theater:
+    #   image: postgres:15
+    #   container_name: db-theater
+    #   environment:
+    #     POSTGRES_USER: postgres
+    #     POSTGRES_PASSWORD: postgres
+    #     POSTGRES_DB: theater
+    #
+    # db-movies:
+    #   image: postgres:15
+    #   container_name: db-movies
+    #   environment:
+    #     POSTGRES_USER: postgres
+    #     POSTGRES_PASSWORD: postgres
+    #     POSTGRES_DB: movies
+    #
+    # db-booking:
+    #   image: postgres:15
+    #   container_name: db-booking
+    #   environment:
+    #     POSTGRES_USER: postgres
+    #     POSTGRES_PASSWORD: postgres
+    #     POSTGRES_DB: booking
+    #
+    # db-payment:
+    #   image: postgres:15
+    #   container_name: db-payment
+    #   environment:
+    #     POSTGRES_USER: postgres
+    #     POSTGRES_PASSWORD: postgres
+    #     POSTGRES_DB: payment
+    #
+    # db-analytics:
+    #   image: postgres:15
+    #   container_name: db-analytics
+    #   environment:
+    #     POSTGRES_USER: postgres
+    #     POSTGRES_PASSWORD: postgres
+    #     POSTGRES_DB: analytics
+
+volumes:
+    auth_pgdata:
