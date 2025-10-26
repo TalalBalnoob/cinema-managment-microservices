@@ -11,7 +11,7 @@ services:
         depends_on:
             - auth-service
             # - theater-service
-            # - movies-service
+            - movies-service
             # - booking-service
             # - payment-service
             # - notification-service
@@ -38,17 +38,17 @@ services:
     #     - db-theater
     #     - rabbitmq
     #
-    # # --- Movies Service ---
-    # movies-service:
-    #   container_name: movies-service
-    #   build:
-    #     context: ./movies-service
-    #   environment:
-    #     - ConnectionStrings__Default=Host=db-movies;Database=movies;Username=postgres;Password=postgres
-    #   depends_on:
-    #     - db-movies
-    #     - rabbitmq
-    #
+    # --- Movies Service ---
+    movies-service:
+        container_name: movies-service
+        build:
+            context: ./MovieService
+        environment:
+            - ConnectionStrings__Default=Host=db-movies;Database=movies;Username=postgres;Password=postgres
+        depends_on:
+            - db-movies
+            - rabbitmq
+
     # # --- Booking Service ---
     # booking-service:
     #   container_name: booking-service
@@ -92,18 +92,18 @@ services:
     #   depends_on:
     #     - db-analytics
     #     - rabbitmq
-    #
-    # # --- RabbitMQ ---
-    # rabbitmq:
-    #   image: rabbitmq:3-management
-    #   container_name: rabbitmq
-    #   ports:
-    #     - "5672:5672"
-    #     - "15672:15672"
-    #   environment:
-    #     RABBITMQ_DEFAULT_USER: guest
-    #     RABBITMQ_DEFAULT_PASS: guest
-    #
+
+    # --- RabbitMQ ---
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: rabbitmq
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+        environment:
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest
+
     # --- PostgreSQL Databases ---
     db-auth:
         image: postgres:15
@@ -124,13 +124,17 @@ services:
     #     POSTGRES_PASSWORD: postgres
     #     POSTGRES_DB: theater
     #
-    # db-movies:
-    #   image: postgres:15
-    #   container_name: db-movies
-    #   environment:
-    #     POSTGRES_USER: postgres
-    #     POSTGRES_PASSWORD: postgres
-    #     POSTGRES_DB: movies
+    db-movies:
+        image: postgres:15
+        container_name: db-movies
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: movies
+        ports:
+            - "5433:5432"
+        volumes:
+            - movie_pgdata:/var/lib/postgresql/data
     #
     # db-booking:
     #   image: postgres:15
@@ -158,3 +162,4 @@ services:
 
 volumes:
     auth_pgdata:
+    movie_pgdata:
