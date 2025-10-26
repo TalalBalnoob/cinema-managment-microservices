@@ -16,4 +16,8 @@ public class Movies {
 
 	[Range(0.0, 5.0)]
 	public float Rating { get; set; }
+
+	public DateTime? ReleaseDate { get; set; } = null;
+
+	public bool Adult { get; set; } = false;
 }

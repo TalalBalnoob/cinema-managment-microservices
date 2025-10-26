@@ -36,6 +36,8 @@ public class MoviesController(AppDbContext db) : ControllerBase {
 			Title = movie.Title,
 			Description = movie.Description ?? string.Empty,
 			Duration = movie.Duration,
+			Adult = movie.Adult,
+			ReleaseDate = movie.ReleaseDate ?? null,
 			Rating = movie.Rating
 		};
 
@@ -55,6 +57,8 @@ public class MoviesController(AppDbContext db) : ControllerBase {
 		existingMovie.Description = updatedMovie.Description;
 		existingMovie.Duration = updatedMovie.Duration;
 		existingMovie.Rating = updatedMovie.Rating;
+		existingMovie.Adult = updatedMovie.Adult;
+		existingMovie.ReleaseDate = updatedMovie.ReleaseDate;
 
 		db.SaveChangesAsync();
 		return NoContent();
