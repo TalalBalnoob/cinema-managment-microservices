@@ -24,6 +24,7 @@ services:
             context: ./AuthService
         environment:
             - ConnectionStrings__Default=Host=db-auth;Database=auth;Username=postgres;Password=postgres
+            - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
         depends_on:
             - db-auth
 
@@ -34,6 +35,7 @@ services:
     #     context: ./theater-service
     #   environment:
     #     - ConnectionStrings__Default=Host=db-theater;Database=theater;Username=postgres;Password=postgres
+    #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
     #   depends_on:
     #     - db-theater
     #     - rabbitmq
@@ -45,6 +47,7 @@ services:
             context: ./MovieService
         environment:
             - ConnectionStrings__Default=Host=db-movies;Database=movies;Username=postgres;Password=postgres
+            - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
         depends_on:
             - db-movies
             - rabbitmq
@@ -56,6 +59,7 @@ services:
     #     context: ./booking-service
     #   environment:
     #     - ConnectionStrings__Default=Host=db-booking;Database=booking;Username=postgres;Password=postgres
+    #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
     #     - RABBITMQ__HOST=rabbitmq
     #   depends_on:
     #     - db-booking
@@ -68,6 +72,7 @@ services:
     #     context: ./payment-service
     #   environment:
     #     - ConnectionStrings__Default=Host=db-payment;Database=payment;Username=postgres;Password=postgres
+    #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
     #   depends_on:
     #     - db-payment
     #
@@ -77,6 +82,7 @@ services:
     #   build:
     #     context: ./notification-service
     #   environment:
+    #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
     #     - RABBITMQ__HOST=rabbitmq
     #   depends_on:
     #     - rabbitmq
@@ -88,6 +94,7 @@ services:
     #     context: ./analytics-service
     #   environment:
     #     - ConnectionStrings__Default=Host=db-analytics;Database=analytics;Username=postgres;Password=postgres
+    #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
     #     - RABBITMQ__HOST=rabbitmq
     #   depends_on:
     #     - db-analytics
