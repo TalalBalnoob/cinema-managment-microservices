@@ -29,17 +29,17 @@ services:
             - db-auth
 
     # --- Theater Service ---
-    # theater-service:
-    #   container_name: theater-service
-    #   build:
-    #     context: ./theater-service
-    #   environment:
-    #     - ConnectionStrings__Default=Host=db-theater;Database=theater;Username=postgres;Password=postgres
-    #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
-    #   depends_on:
-    #     - db-theater
-    #     - rabbitmq
-    #
+    theater-service:
+        container_name: theater-service
+        build:
+            context: ./theater-service
+        environment:
+            - ConnectionStrings__Default=Host=db-theater;Database=theater;Username=postgres;Password=postgres
+            - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
+        depends_on:
+            - db-theater
+            - rabbitmq
+
     # --- Movies Service ---
     movies-service:
         container_name: movies-service
@@ -123,14 +123,19 @@ services:
             - "5432:5432"
         volumes:
             - auth_pgdata:/var/lib/postgresql/data
-    # db-theater:
-    #   image: postgres:15
-    #   container_name: db-theater
-    #   environment:
-    #     POSTGRES_USER: postgres
-    #     POSTGRES_PASSWORD: postgres
-    #     POSTGRES_DB: theater
-    #
+
+    db-theater:
+        image: postgres:15
+        container_name: db-theater
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: theater
+        ports:
+            - "5433:5432"
+        volumes:
+            - theater_pgdata:/var/lib/postgresql/data
+
     db-movies:
         image: postgres:15
         container_name: db-movies
@@ -139,7 +144,7 @@ services:
             POSTGRES_PASSWORD: postgres
             POSTGRES_DB: movies
         ports:
-            - "5433:5432"
+            - "5434:5432"
         volumes:
             - movie_pgdata:/var/lib/postgresql/data
     #
@@ -170,3 +175,4 @@ services:
 volumes:
     auth_pgdata:
     movie_pgdata:
+    theater_pgdata:
