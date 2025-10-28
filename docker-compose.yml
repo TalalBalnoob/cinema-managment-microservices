@@ -32,7 +32,7 @@ services:
     theater-service:
         container_name: theater-service
         build:
-            context: ./theater-service
+            context: ./TheaterService
         environment:
             - ConnectionStrings__Default=Host=db-theater;Database=theater;Username=postgres;Password=postgres
             - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
@@ -56,7 +56,7 @@ services:
     # booking-service:
     #   container_name: booking-service
     #   build:
-    #     context: ./booking-service
+    #     context: ./BookingService
     #   environment:
     #     - ConnectionStrings__Default=Host=db-booking;Database=booking;Username=postgres;Password=postgres
     #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
@@ -69,7 +69,7 @@ services:
     # payment-service:
     #   container_name: payment-service
     #   build:
-    #     context: ./payment-service
+    #     context: ./PaymentService
     #   environment:
     #     - ConnectionStrings__Default=Host=db-payment;Database=payment;Username=postgres;Password=postgres
     #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
@@ -80,7 +80,7 @@ services:
     # notification-service:
     #   container_name: notification-service
     #   build:
-    #     context: ./notification-service
+    #     context: ./NotificationService
     #   environment:
     #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
     #     - RABBITMQ__HOST=rabbitmq
@@ -91,7 +91,7 @@ services:
     # analytics-service:
     #   container_name: analytics-service
     #   build:
-    #     context: ./analytics-service
+    #     context: ./AnalyticsService
     #   environment:
     #     - ConnectionStrings__Default=Host=db-analytics;Database=analytics;Username=postgres;Password=postgres
     #     - JWT_KEY=yYzj2akgD0A7pRZz1xM4h9n2bLV4Dgk5e3Kq9oZbJpG7QvF3rZpG8vHq1tXxSgVvQz5s1nA6KxM8mHq7YyQ9w==
