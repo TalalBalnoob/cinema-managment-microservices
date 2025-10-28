@@ -163,7 +163,7 @@ docker compose up --build movies-service
 * [ ] MicorServices:
   * [X] **API Gateway**
   * [X] **Auth Service**
-  * [ ] **Movie Service**
+  * [X] **Movie Service**
   * [ ] **User Service**
   * [ ] **Booking Service**
   * [ ] **Payment Service**
