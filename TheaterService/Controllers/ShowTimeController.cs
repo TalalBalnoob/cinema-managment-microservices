@@ -76,5 +76,56 @@ namespace TheaterService.Controllers {
 			return CreatedAtAction(nameof(GetShowTime), new { id = showtime.Entity.Id, hall_id = hall_id }, showtime.Entity);
 		}
 
+		[HttpPut("/{id}")]
+		public async Task<IActionResult> UpdateShowTime([FromRoute] int hall_id, [FromRoute] int id, [FromBody] NewShowTime newShowtime) {
+			var showtime = db.Showtimes.Single(s => s.Id == id || s.Hall_Id == hall_id);
+			if (showtime == null) return NotFound();
+
+			// Get the movie details
+			using var http = new HttpClient();
+			var moviesRes = await http.GetAsync($"http://movie-service/{newShowtime.Movie_Id}");
+			if (!moviesRes.IsSuccessStatusCode) return BadRequest("Movie Not found");
+
+			// convert json res to movie object to use for validate data
+			var movieJson = await moviesRes.Content.ReadAsStringAsync();
+			var movie = JsonSerializer.Deserialize<MovieDto>(movieJson, new JsonSerializerOptions {
+				PropertyNameCaseInsensitive = true
+			});
+
+			// Check if the movie duration align with show time duration
+			var showtimeDuration = (newShowtime.End_time - newShowtime.Start_time).TotalMinutes;
+			if (movie.Duration + 30 >= showtimeDuration) return BadRequest();
+
+			// Check for overlap shows in the newShow duration
+			var overlaps = await db.Showtimes
+	   		.Where(s => s.Hall_Id == hall_id
+		   	&& s.Date == newShowtime.Date
+		   	&& (
+			   (newShowtime.Start_time >= s.Start_time && newShowtime.Start_time < s.End_time)
+			   || (newShowtime.End_time > s.Start_time && newShowtime.End_time <= s.End_time)
+			   || (newShowtime.Start_time <= s.Start_time && newShowtime.End_time >= s.End_time)
+		   	))
+	   		.AnyAsync();
+
+			showtime.Hall_Id = hall_id;
+			showtime.Movie_Id = newShowtime.Movie_Id;
+			showtime.Start_time = newShowtime.Start_time;
+			showtime.End_time = newShowtime.End_time;
+			showtime.Price = newShowtime.Price;
+			showtime.Date = newShowtime.Date;
+
+			db.SaveChanges();
+			return Ok(showtime);
+		}
+
+		[HttpDelete("/{id}")]
+		public IActionResult deleteShow([FromRoute] int hall_id, [FromRoute] int id) {
+			var showtime = db.Showtimes.Single(s => s.Id == id || s.Hall_Id == hall_id);
+			if (showtime == null) return NotFound();
+
+			db.Showtimes.Remove(showtime);
+			return NoContent();
+		}
+
 	}
 }
