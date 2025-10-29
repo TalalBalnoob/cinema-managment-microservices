@@ -23,7 +23,7 @@ public class Seat {
 
 	public string Seat_type { get; set; } = Seat_types.REGULAR;
 
-	public bool isActive { get; set; } = true;
+	public bool IsActive { get; set; } = true;
 
 	[ForeignKey("Hall_Id")]
 	public Hall? Hall { get; set; }
