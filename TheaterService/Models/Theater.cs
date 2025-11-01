@@ -11,4 +11,6 @@ public class Theater {
 	public string Name { get; set; }
 
 	public string Location { get; set; }
+
+	public ICollection<Hall> Halls { get; set; }
 }

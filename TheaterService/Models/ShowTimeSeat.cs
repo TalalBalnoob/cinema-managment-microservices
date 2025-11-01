@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 using TheaterService.Statics;
 
@@ -20,5 +21,8 @@ public class ShowTimeSeat {
 	public DateTime? Reservation_expires_at { get; set; }
 
 	public string Status { get; set; } = ShowTimeSeat_Status.AVAILABLE;
+
+	[ForeignKey("Showtime_Id")]
+	public Showtime? ShowTime { get; set; }
 
 }
