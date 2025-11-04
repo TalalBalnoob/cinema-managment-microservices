@@ -27,4 +27,5 @@ public class Hall {
 	[ForeignKey("Theater_Id")]
 	public Theater? Theater { get; set; }
 
+	public ICollection<Seat>? Seats { get; set; }
 }

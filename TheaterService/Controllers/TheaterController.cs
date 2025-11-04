@@ -4,11 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 using TheaterService.Data;
 using TheaterService.DTOs;
 using TheaterService.Models;
+using TheaterService.Services;
 
 namespace TheaterService.Controllers {
 	[Route("theaters/")]
 	[ApiController]
-	public class TheaterController(AppDbContext db) : ControllerBase {
+	public class TheaterController : ControllerBase {
+		private readonly AppDbContext db;
+		private readonly TheaterServices _service;
+
+		public TheaterController(AppDbContext dbContext, TheaterServices theaterServices) {
+			db = dbContext;
+			_service = theaterServices;
+		}
+
 		[HttpGet("health")]
 		public IActionResult GetStatus() {
 			return Ok(new { status = "Theater service is running." });
@@ -28,6 +37,13 @@ namespace TheaterService.Controllers {
 			}
 			return Ok(theater);
 		}
+
+		[HttpGet("/{id}/halls")]
+		public IActionResult GetHallsForTheater(int id) {
+			var halls = _service.GetHallsForTheater(id);
+			return Ok(halls);
+		}
+
 
 		[HttpPost]
 		public IActionResult CreateTheater([FromBody] NewTheater newTheater) {
