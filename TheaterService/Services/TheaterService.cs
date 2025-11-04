@@ -22,13 +22,13 @@ public class TheaterServices(AppDbContext _db) {
 		return theater;
 	}
 
-	public IEnumerable<Hall> GetHallsForTheater(int theater_id) {
-		var hall = _db.Halls
-			.Include(h => h.Seats)
-			.Where(h => h.Theater_Id == theater_id);
+	// public IEnumerable<Hall> GetHallsForTheater(int theater_id) {
+	// 	var hall = _db.Halls
+	// 		.Include(h => h.Seats)
+	// 		.Where(h => h.Theater_Id == theater_id);
 
-		return hall;
-	}
+	// 	return hall;
+	// }
 
 	public Theater Create(NewTheater newTheater) {
 		var theater = _db.Theaters.Add(new Theater {

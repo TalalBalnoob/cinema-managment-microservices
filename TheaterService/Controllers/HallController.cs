@@ -4,14 +4,23 @@ using Microsoft.AspNetCore.Mvc;
 using TheaterService.Data;
 using TheaterService.DTOs;
 using TheaterService.Models;
+using TheaterService.Services;
 
 namespace TheaterService.Controllers {
 	[Route("/theaters/{theater_id}/halls")]
 	[ApiController]
-	public class HallController(AppDbContext db) : ControllerBase {
+	public class HallController : ControllerBase {
+		private readonly AppDbContext db;
+		private readonly HallService _service;
+
+		public HallController(AppDbContext dbContext, HallService hallService) {
+			db = dbContext;
+			_service = hallService;
+		}
+
 		[HttpGet]
 		public IActionResult GetHallsInTheater([FromRoute] int theater_id) {
-			var halls = db.Halls.Where(h => h.Theater_Id == theater_id);
+			var halls = _service.GetAllHalls(theater_id);
 
 			return Ok(halls);
 		}

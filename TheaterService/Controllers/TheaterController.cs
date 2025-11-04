@@ -11,11 +11,9 @@ namespace TheaterService.Controllers {
 	[ApiController]
 	public class TheaterController : ControllerBase {
 		private readonly AppDbContext db;
-		private readonly TheaterServices _service;
 
-		public TheaterController(AppDbContext dbContext, TheaterServices theaterServices) {
+		public TheaterController(AppDbContext dbContext) {
 			db = dbContext;
-			_service = theaterServices;
 		}
 
 		[HttpGet("health")]
@@ -36,12 +34,6 @@ namespace TheaterService.Controllers {
 				return NotFound(new { message = "Theater not found." });
 			}
 			return Ok(theater);
-		}
-
-		[HttpGet("/{id}/halls")]
-		public IActionResult GetHallsForTheater(int id) {
-			var halls = _service.GetHallsForTheater(id);
-			return Ok(halls);
 		}
 
 
