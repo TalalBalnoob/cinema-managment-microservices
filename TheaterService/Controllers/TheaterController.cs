@@ -1,3 +1,6 @@
+using System.Data.Common;
+using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,12 +12,7 @@ using TheaterService.Services;
 namespace TheaterService.Controllers {
 	[Route("theaters/")]
 	[ApiController]
-	public class TheaterController : ControllerBase {
-		private readonly AppDbContext db;
-
-		public TheaterController(AppDbContext dbContext) {
-			db = dbContext;
-		}
+	public class TheaterController(TheaterServices _service) : ControllerBase {
 
 		[HttpGet("health")]
 		public IActionResult GetStatus() {
@@ -22,14 +20,14 @@ namespace TheaterService.Controllers {
 		}
 
 		[HttpGet]
-		public IActionResult GetTheaters() {
-			var theaters = db.Theaters.ToList();
+		public async Task<IActionResult> GetTheaters() {
+			var theaters = await _service.GetAll();
 			return Ok(theaters);
 		}
 
 		[HttpGet("/{id}")]
-		public IActionResult GetTheater(int id) {
-			var theater = db.Theaters.Find(id);
+		public async Task<IActionResult> GetTheater(int id) {
+			var theater = await _service.GetOne(id);
 			if (theater == null) {
 				return NotFound(new { message = "Theater not found." });
 			}
@@ -38,35 +36,21 @@ namespace TheaterService.Controllers {
 
 
 		[HttpPost]
-		public IActionResult CreateTheater([FromBody] NewTheater newTheater) {
-			var theater = db.Theaters.Add(new Theater {
-				Id = 0,
-				Name = newTheater.Name,
-				Location = newTheater.Location
-			});
-
-			db.SaveChanges();
-			return CreatedAtAction(nameof(GetTheater), new { id = theater.Entity.Id }, theater.Entity);
+		public async Task<IActionResult> CreateTheater([FromBody] NewTheater newTheater) {
+			var theater = await _service.Create(newTheater);
+			return CreatedAtAction(nameof(GetTheater), new { id = theater.Id }, theater);
 		}
 
 		[HttpPut("/{id}")]
-		public IActionResult UpdateTheater(int id, [FromBody] NewTheater newTheater) {
-			var theaterFromDb = db.Theaters.Find(id);
-			if (theaterFromDb == null) return NotFound();
-
-			theaterFromDb.Name = newTheater.Name;
-			theaterFromDb.Location = newTheater.Location;
-
-			db.SaveChanges();
-			return Ok(theaterFromDb);
+		public async Task<IActionResult> UpdateTheater(int id, [FromBody] NewTheater newTheater) {
+			var updatedTheater = await _service.Update(id, newTheater);
+			if (updatedTheater == null) return NotFound();
+			return Ok(updatedTheater);
 		}
 
 		[HttpDelete("/{id}")]
-		public IActionResult DeleteTheater(int id) {
-			var theaterFromDb = db.Theaters.Find(id);
-			if (theaterFromDb == null) return NotFound();
-
-			db.Theaters.Remove(theaterFromDb);
+		public async Task<IActionResult> DeleteTheater(int id) {
+			await _service.Delete(id);
 			return NoContent();
 		}
 	}

@@ -11,19 +11,19 @@ using TheaterService.Models;
 namespace TheaterService.Services;
 
 public class TheaterServices(AppDbContext _db, HallService hallService) {
-	public List<Theater> GetAll() {
+	public async Task<List<Theater>> GetAll() {
 		var theaters = _db.Theaters.ToList();
 
 		return theaters;
 	}
 
-	public Theater GetOne(int id) {
+	public async Task<Theater?> GetOne(int id) {
 		var theater = _db.Theaters.Include(t => t.Halls).SingleOrDefault(t => t.Id == id);
 
 		return theater;
 	}
 
-	public Theater Create(NewTheater newTheater) {
+	public async Task<Theater> Create(NewTheater newTheater) {
 		var theater = _db.Theaters.Add(new Theater {
 			Id = 0,
 			Name = newTheater.Name,
@@ -34,9 +34,9 @@ public class TheaterServices(AppDbContext _db, HallService hallService) {
 		return theater.Entity;
 	}
 
-	public Theater Update(int id, NewTheater newTheater) {
+	public async Task<Theater?> Update(int id, NewTheater newTheater) {
 		var theaterFromDb = _db.Theaters.SingleOrDefault(t => t.Id == id);
-		if (theaterFromDb == null) ;
+		if (theaterFromDb == null) return null;
 
 		theaterFromDb.Name = newTheater.Name;
 		theaterFromDb.Location = newTheater.Location;
