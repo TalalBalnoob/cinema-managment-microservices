@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,66 +11,46 @@ using TheaterService.Services;
 namespace TheaterService.Controllers {
 	[Route("/theaters/{theater_id}/halls")]
 	[ApiController]
-	public class HallController : ControllerBase {
-		private readonly AppDbContext db;
-		private readonly HallService _service;
+	public class HallController(HallService _service) : ControllerBase {
 
-		public HallController(AppDbContext dbContext, HallService hallService) {
-			db = dbContext;
-			_service = hallService;
-		}
 
 		[HttpGet]
-		public IActionResult GetHallsInTheater([FromRoute] int theater_id) {
-			var halls = _service.GetAllHalls(theater_id);
+		public async Task<IActionResult> GetHallsInTheater([FromRoute] int theater_id) {
+			var halls = await _service.GetAllHalls(theater_id);
 
 			return Ok(halls);
 		}
 
 		[HttpGet("/{id}")]
-		public IActionResult GetHall([FromRoute] int theater_id, [FromRoute] int id) {
-			var hall = db.Halls.Find(id);
+		public async Task<IActionResult> GetHall([FromRoute] int theater_id, [FromRoute] int id) {
+			var hall = await _service.GetHall(id);
 			if (hall == null || hall.Theater_Id != theater_id) return NotFound();
 
 			return Ok(hall);
 		}
 
 		[HttpPost]
-		public IActionResult CreateNewHall([FromRoute] int theater_id, [FromBody] NewHall newHall) {
-			var hall = db.Halls.Add(new Hall {
-				Id = 0,
-				Name = newHall.Name,
-				Layout_columns = newHall.Layout_columns,
-				Layout_rows = newHall.Layout_rows,
-				Capacity = newHall.Layout_rows * newHall.Layout_columns,
-				Theater_Id = theater_id
-			});
-
-			db.SaveChanges();
-			return CreatedAtAction(nameof(GetHall), new { id = hall.Entity.Id, theater_id = hall.Entity.Theater_Id }, hall.Entity);
+		public async Task<IActionResult> CreateNewHall([FromRoute] int theater_id, [FromBody] NewHall newHall) {
+			var hall = await _service.CreateHall(theater_id, newHall);
+			return CreatedAtAction(nameof(GetHall), new { id = hall.Id, theater_id = hall.Theater_Id }, hall);
 		}
 
 		[HttpPut("/{id}")]
-		public IActionResult UpdateHall([FromRoute] int theater_id, [FromRoute] int id, [FromBody] NewHall newHall) {
-			var hall = db.Halls.Find(id);
-			if (hall == null || hall.Theater_Id != theater_id) return NotFound();
-
-			hall.Name = newHall.Name;
-			hall.Layout_columns = newHall.Layout_columns;
-			hall.Layout_rows = newHall.Layout_rows;
-			hall.Capacity = newHall.Layout_columns * newHall.Layout_rows;
-
-			db.SaveChanges();
+		public async Task<IActionResult> UpdateHall([FromRoute] int theater_id, [FromRoute] int id, [FromBody] NewHall newHall) {
+			var hall = await _service.UpdateHall(theater_id, id, newHall);
+			if (hall == null) return NotFound();
 			return Ok(hall);
 		}
 
 		[HttpDelete("/{id}")]
 		public IActionResult DeleteHall([FromRoute] int theater_id, [FromRoute] int id) {
-			var hall = db.Halls.Find(id);
-			if (hall == null || hall.Theater_Id != theater_id) return NotFound();
-
-			db.Halls.Remove(hall);
-			db.SaveChanges();
+			try {
+				_service.DeleteHall(theater_id, id);
+			}
+			catch (System.Exception ex) {
+				// return the error message
+				return BadRequest(new { message = ex.Message });
+			}
 			return NoContent();
 		}
 

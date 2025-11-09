@@ -9,7 +9,7 @@ using TheaterService.Models;
 namespace TheaterService.Services;
 
 public class HallService(AppDbContext db) {
-	public ICollection<Hall> GetAllHalls(int theater_id) {
+	public async Task<ICollection<Hall>> GetAllHalls(int theater_id) {
 		var halls = db.Halls
 			.Include(h => h.Seats)
 			.Where(h => h.Theater_Id == theater_id).ToList();
@@ -17,14 +17,14 @@ public class HallService(AppDbContext db) {
 		return halls;
 	}
 
-	public Hall GetHall(int id) {
+	public async Task<Hall?> GetHall(int id) {
 		var hall = db.Halls.Include(h => h.Seats).FirstOrDefault(h => h.Id == id);
-		if (hall == null) throw new Exception("Hall not found");
+		if (hall == null) return null;
 
 		return hall;
 	}
 
-	public Hall CreateHall(int theater_id, NewHall newHall) {
+	public async Task<Hall> CreateHall(int theater_id, NewHall newHall) {
 		var hall = db.Halls.Add(new Hall {
 			Id = 0,
 			Name = newHall.Name,
@@ -38,9 +38,9 @@ public class HallService(AppDbContext db) {
 		return hall.Entity;
 	}
 
-	public Hall UpdateHall(int theater_id, int id, NewHall newHall) {
+	public async Task<Hall?> UpdateHall(int theater_id, int id, NewHall newHall) {
 		var hall = db.Halls.FirstOrDefault(h => h.Id == id && h.Theater_Id == theater_id);
-		if (hall == null) throw new Exception("Hall not found");
+		if (hall == null) return null;
 
 		hall.Name = newHall.Name;
 		hall.Layout_columns = newHall.Layout_columns;
@@ -51,7 +51,7 @@ public class HallService(AppDbContext db) {
 		return hall;
 	}
 
-	public void DeleteHall(int theater_id, int? id) {
+	public void DeleteHall(int theater_id, int id) {
 		var hall = db.Halls.FirstOrDefault(h => h.Id == id && h.Theater_Id == theater_id);
 		if (hall == null) throw new Exception("Hall not found");
 
