@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using TheaterService.Models;
 
 namespace TheaterService.Services;
 
-public class TheaterServices(AppDbContext _db) {
+public class TheaterServices(AppDbContext _db, HallService hallService) {
 	public List<Theater> GetAll() {
 		var theaters = _db.Theaters.ToList();
 
@@ -42,6 +43,21 @@ public class TheaterServices(AppDbContext _db) {
 
 		_db.SaveChanges();
 		return theaterFromDb;
+	}
+
+	public async Task Delete(int id) {
+		var theaterFromDb = _db.Theaters.SingleOrDefault(t => t.Id == id);
+		if (theaterFromDb == null) return;
+
+		try{
+			hallService.DeleteAllHalls(id);
+		}
+		catch (System.Exception){
+			throw new Exception("Something went wrong");
+		}
+
+		_db.Theaters.Remove(theaterFromDb);
+		_db.SaveChanges();
 	}
 
 }
