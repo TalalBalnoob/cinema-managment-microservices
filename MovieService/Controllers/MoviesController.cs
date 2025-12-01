@@ -8,7 +8,7 @@ namespace MovieService.Controllers;
 [Route("/")]
 [ApiController]
 public class MoviesController(AppDbContext db) : ControllerBase {
-	[HttpGet("health")]
+	[HttpGet("ping")]
 	[AllowAnonymous]
 	public IActionResult Health() {
 		return Ok("Movie Service is healthy");

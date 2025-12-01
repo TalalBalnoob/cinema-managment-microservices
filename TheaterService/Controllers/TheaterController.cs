@@ -1,20 +1,20 @@
-using System.Data.Common;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using TheaterService.Data;
 using TheaterService.DTOs;
-using TheaterService.Models;
 using TheaterService.Services;
 
 namespace TheaterService.Controllers {
-	[Route("theaters/")]
+	[Route("/")]
 	[ApiController]
 	public class TheaterController(TheaterServices _service) : ControllerBase {
 
-		[HttpGet("health")]
+		// private readonly ITheaterService _service;
+
+		// public TheaterController(TheaterServices service) {
+		// 	_service = service;
+		// }
+
+		[HttpGet("ping")]
 		public IActionResult GetStatus() {
 			return Ok(new { status = "Theater service is running." });
 		}

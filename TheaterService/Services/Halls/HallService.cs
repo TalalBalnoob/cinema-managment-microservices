@@ -1,15 +1,18 @@
-using System;
-using System.Threading.Tasks;
+using MediatR;
 
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 using TheaterService.Data;
 using TheaterService.DTOs;
 using TheaterService.Models;
+using TheaterService.Services.Halls.DeleteHall;
+using TheaterService.Services.SeatServices;
+using TheaterService.Services.SeatServices.DeleteAllSeats;
 
-namespace TheaterService.Services;
+namespace TheaterService.Services.Halls;
 
-public class HallService(AppDbContext db, SeatService seatService) {
+public class HallService(AppDbContext db, IMediator mediator) : IHallService {
 	public async Task<ICollection<Hall>> GetAllHalls(int theater_id) {
 		var halls = db.Halls
 			.Include(h => h.Seats)
@@ -53,16 +56,7 @@ public class HallService(AppDbContext db, SeatService seatService) {
 	}
 
 	public async Task DeleteHall(int theater_id, int id) {
-		var hall = db.Halls.FirstOrDefault(h => h.Id == id && h.Theater_Id == theater_id);
-		if (hall == null) throw new Exception("Hall not found");
-
-		var showsInHall = db.Showtimes.Any(s => s.Hall_Id == id);
-		if (showsInHall) throw new Exception("Cannot delete hall with scheduled showtimes");
-
-		seatService.DeleteAllSeat(id);
-
-		db.Halls.Remove(hall);
-		db.SaveChanges();
+		await mediator.Send(new DeleteHallCommand(theater_id, id));
 		return;
 	}
 
@@ -71,7 +65,7 @@ public class HallService(AppDbContext db, SeatService seatService) {
 		if (halls == null) return;
 
 		foreach (var hall in halls) {
-			await DeleteHall(theater_id, hall.Id);
+			await this.DeleteHall(theater_id, hall.Id);
 		}
 
 		return;

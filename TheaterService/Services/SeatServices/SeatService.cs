@@ -1,15 +1,16 @@
-using System;
+using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
 using TheaterService.Data;
 using TheaterService.DTOs;
-using TheaterService.Migrations;
 using TheaterService.Models;
+using TheaterService.Services.Halls;
+using TheaterService.Services.SeatServices;
 
 namespace TheaterService.Services;
 
-public class SeatService(AppDbContext db) {
+public class SeatService(AppDbContext db, IMediator mediator) : ISeatService {
 	public async Task<IEnumerable<Seat>> GetAllSeats(int hall_id) {
 		var seats = db.Seats.Where(s => s.Hall_Id == hall_id);
 
@@ -51,6 +52,30 @@ public class SeatService(AppDbContext db) {
 
 		db.SaveChanges();
 		return seat.Entity;
+	}
+
+	public async Task<List<Seat>> GenerateAllSeatsInHall(int hall_id) {
+		var hall = db.Halls.FirstOrDefault(h => h.Id == hall_id);
+
+		this.DeleteAllSeat(hall_id);
+
+		var seats = new List<Seat>();
+
+		for (int c = 0; c < hall.Layout_columns; c++) {
+			for (int r = 0; r < hall.Layout_rows; r++) {
+				var seat = new NewSeat {
+					Hall_Id = hall_id,
+					Number = c,
+					Row = r,
+					IsActive = true,
+					Seat_type = "standard",
+				};
+				var createdSeat = await this.CreateSeat(hall_id, seat);
+				seats.Add(createdSeat);
+			}
+		}
+
+		return seats;
 	}
 
 	public async Task<Seat?> UpdateSeat(int hall_id, int id, NewSeat newSeat) {

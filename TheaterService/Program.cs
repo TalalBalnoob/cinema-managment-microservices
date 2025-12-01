@@ -1,9 +1,15 @@
 using System.Text;
 
+using MediatR;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
+using TheaterService.Services;
+using TheaterService.Services.Halls;
+using TheaterService.Services.SeatServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +26,8 @@ builder.Services.AddDbContext<TheaterService.Data.AppDbContext>(options =>
 
 builder
 	.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-	.AddJwtBearer(options =>
-	{
-		options.TokenValidationParameters = new TokenValidationParameters
-		{
+	.AddJwtBearer(options => {
+		options.TokenValidationParameters = new TokenValidationParameters {
 			ValidateIssuer = true,
 			ValidateAudience = true,
 			ValidateLifetime = true,
@@ -36,11 +40,18 @@ builder
 		};
 	});
 
+builder.Services.AddMediatR(cfg =>
+	cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly)
+);
+
+builder.Services.AddScoped<ITheaterServices, TheaterServices>();
+builder.Services.AddSingleton<IHallService, HallService>();
+builder.Services.AddSingleton<ISeatService, SeatService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
 	app.MapOpenApi();
 }
 

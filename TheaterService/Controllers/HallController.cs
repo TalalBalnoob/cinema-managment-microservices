@@ -7,6 +7,7 @@ using TheaterService.Data;
 using TheaterService.DTOs;
 using TheaterService.Models;
 using TheaterService.Services;
+using TheaterService.Services.Halls;
 
 namespace TheaterService.Controllers {
 	[Route("/theaters/{theater_id}/halls")]
